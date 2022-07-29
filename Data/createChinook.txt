@@ -1,0 +1,183 @@
+-- create database
+CREATE DATABASE Chinook;
+GO
+
+USE Chinook;
+GO
+
+-- create tables
+CREATE TABLE Album
+(
+    AlbumId INT NOT NULL,
+    Title NVARCHAR(160) NOT NULL,
+    ArtistId INT NOT NULL,
+    CONSTRAINT PK_Album PRIMARY KEY (AlbumId)
+);
+GO
+CREATE TABLE Artist
+(
+    ArtistId INT NOT NULL,
+    Name NVARCHAR(120),
+    CONSTRAINT PK_Artist PRIMARY KEY (ArtistId)
+);
+GO
+CREATE TABLE Customer
+(
+    CustomerId INT NOT NULL,
+    FirstName NVARCHAR(40) NOT NULL,
+    LastName NVARCHAR(20) NOT NULL,
+    Company NVARCHAR(80),
+    Address NVARCHAR(70),
+    City NVARCHAR(40),
+    State NVARCHAR(40),
+    Country NVARCHAR(40),
+    PostalCode NVARCHAR(10),
+    Phone NVARCHAR(24),
+    Fax NVARCHAR(24),
+    Email NVARCHAR(60) NOT NULL,
+    SupportRepId INT,
+    CONSTRAINT PK_Customer PRIMARY KEY (CustomerId)
+);
+GO
+CREATE TABLE Employee
+(
+    EmployeeId INT NOT NULL,
+    LastName NVARCHAR(20) NOT NULL,
+    FirstName NVARCHAR(20) NOT NULL,
+    Title NVARCHAR(30),
+    ReportsTo INT,
+    BirthDate DATETIME,
+    HireDate DATETIME,
+    Address NVARCHAR(70),
+    City NVARCHAR(40),
+    State NVARCHAR(40),
+    Country NVARCHAR(40),
+    PostalCode NVARCHAR(10),
+    Phone NVARCHAR(24),
+    Fax NVARCHAR(24),
+    Email NVARCHAR(60),
+    CONSTRAINT PK_Employee PRIMARY KEY (EmployeeId)
+);
+GO
+CREATE TABLE Genre
+(
+    GenreId INT NOT NULL,
+    Name NVARCHAR(120),
+    CONSTRAINT PK_Genre PRIMARY KEY (GenreId)
+);
+GO
+CREATE TABLE Invoice
+(
+    InvoiceId INT NOT NULL,
+    CustomerId INT NOT NULL,
+    InvoiceDate DATETIME NOT NULL,
+    BillingAddress NVARCHAR(70),
+    BillingCity NVARCHAR(40),
+    BillingState NVARCHAR(40),
+    BillingCountry NVARCHAR(40),
+    BillingPostalCode NVARCHAR(10),
+    Total NUMERIC(10,2) NOT NULL,
+    CONSTRAINT PK_Invoice PRIMARY KEY (InvoiceId)
+);
+GO
+CREATE TABLE InvoiceLine
+(
+    InvoiceLineId INT NOT NULL,
+    InvoiceId INT NOT NULL,
+    TrackId INT NOT NULL,
+    UnitPrice NUMERIC(10,2) NOT NULL,
+    Quantity INT NOT NULL,
+    CONSTRAINT PK_InvoiceLine PRIMARY KEY (InvoiceLineId)
+);
+GO
+CREATE TABLE MediaType
+(
+    MediaTypeId INT NOT NULL,
+    Name NVARCHAR(120),
+    CONSTRAINT PK_MediaType PRIMARY KEY (MediaTypeId)
+);
+GO
+CREATE TABLE Playlist
+(
+    PlaylistId INT NOT NULL,
+    Name NVARCHAR(120),
+    CONSTRAINT PK_Playlist PRIMARY KEY (PlaylistId)
+);
+GO
+CREATE TABLE PlaylistTrack
+(
+    PlaylistId INT NOT NULL,
+    TrackId INT NOT NULL,
+    CONSTRAINT PK_PlaylistTrack PRIMARY KEY (PlaylistId, TrackId)
+);
+GO
+CREATE TABLE Track
+(
+    TrackId INT NOT NULL,
+    Name NVARCHAR(200) NOT NULL,
+    AlbumId INT,
+    MediaTypeId INT NOT NULL,
+    GenreId INT,
+    Composer NVARCHAR(220),
+    Milliseconds INT NOT NULL,
+    Bytes INT,
+    UnitPrice NUMERIC(10,2) NOT NULL,
+    CONSTRAINT PK_Track PRIMARY KEY (TrackId)
+);
+GO
+
+-- Alter table - Add foreign keys
+ALTER TABLE Album ADD CONSTRAINT FK_AlbumArtistId
+    FOREIGN KEY (ArtistId) REFERENCES Artist (ArtistId);
+GO
+ALTER TABLE Customer ADD CONSTRAINT FK_CustomerSupportRepId
+    FOREIGN KEY (SupportRepId) REFERENCES Employee (EmployeeId);
+GO
+ALTER TABLE Employee ADD CONSTRAINT FK_EmployeeReportsTo
+    FOREIGN KEY (ReportsTo) REFERENCES Employee (EmployeeId);
+GO
+ALTER TABLE Invoice ADD CONSTRAINT FK_InvoiceCustomerId
+    FOREIGN KEY (CustomerId) REFERENCES Customer (CustomerId);
+GO
+ALTER TABLE InvoiceLine ADD CONSTRAINT FK_InvoiceLineInvoiceId
+    FOREIGN KEY (InvoiceId) REFERENCES Invoice (InvoiceId);
+GO
+ALTER TABLE InvoiceLine ADD CONSTRAINT FK_InvoiceLineTrackId
+    FOREIGN KEY (TrackId) REFERENCES Track (TrackId);
+GO
+ALTER TABLE PlaylistTrack ADD CONSTRAINT FK_PlaylistTrackPlaylistId
+    FOREIGN KEY (PlaylistId) REFERENCES Playlist (PlaylistId);
+GO
+ALTER TABLE PlaylistTrack ADD CONSTRAINT FK_PlaylistTrackTrackId
+    FOREIGN KEY (TrackId) REFERENCES Track (TrackId);
+GO
+ALTER TABLE Track ADD CONSTRAINT FK_TrackAlbumId
+    FOREIGN KEY (AlbumId) REFERENCES Album (AlbumId);
+GO
+ALTER TABLE Track ADD CONSTRAINT FK_TrackGenreId
+    FOREIGN KEY (GenreId) REFERENCES Genre (GenreId);
+GO
+ALTER TABLE Track ADD CONSTRAINT FK_TrackMediaTypeId
+    FOREIGN KEY (MediaTypeId) REFERENCES MediaType (MediaTypeId);
+GO
+
+-- Alter table - Add Index
+CREATE INDEX IFK_AlbumArtistId ON Album (ArtistId);
+GO
+CREATE INDEX IFK_CustomerSupportRepId ON Customer (SupportRepId);
+GO
+CREATE INDEX IFK_EmployeeReportsTo ON Employee (ReportsTo);
+GO
+CREATE INDEX IFK_InvoiceCustomerId ON Invoice (CustomerId);
+GO
+CREATE INDEX IFK_InvoiceLineInvoiceId ON InvoiceLine (InvoiceId);
+GO
+CREATE INDEX IFK_InvoiceLineTrackId ON InvoiceLine (TrackId);
+GO
+CREATE INDEX IFK_PlaylistTrackTrackId ON PlaylistTrack (TrackId);
+GO
+CREATE INDEX IFK_TrackAlbumId ON Track (AlbumId);
+GO
+CREATE INDEX IFK_TrackGenreId ON Track (GenreId);
+GO
+CREATE INDEX IFK_TrackMediaTypeId ON Track (MediaTypeId);
