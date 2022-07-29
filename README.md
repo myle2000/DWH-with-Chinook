@@ -1,1 +1,1 @@
-# Data-visualization-with-Chinook
+# DWH-with-Chinook
