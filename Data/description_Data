@@ -1,0 +1,4 @@
+
+createChinook.txt: khởi tạo Chinook database
+dataChinook.txt: nạp dữ liệu vào Chinook database
+createDWHChinook.txt: tạo dữ liệu cho DHW
